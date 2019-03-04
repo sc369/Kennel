@@ -12,6 +12,7 @@ import AnimalManager from '../modules/AnimalManager'
 import OwnerManager from '../modules/OwnerManager'
 import LocationManager from '../modules/LocationManager'
 import EmployeeManager from '../modules/EmployeeManager'
+import AnimalForm from '../components/animal/AnimalForm'
 
 
 class ApplicationViews extends Component {
@@ -22,6 +23,14 @@ class ApplicationViews extends Component {
         animals: [],
         locations: []
     }
+    addAnimal = animal =>
+        AnimalManager.post(animal)
+            .then(() => AnimalManager.getAll())
+            .then(animals =>
+                this.setState({
+                    animals: animals
+                })
+            )
 
     dischargeAnimal = (id) =>
         AnimalManager.delete(id)
@@ -37,7 +46,7 @@ class ApplicationViews extends Component {
         AnimalManager.getAll().then(animals => this.setState({ animals: animals }))
 
 
-    componentDidUpdate () {
+    componentDidUpdate() {
         console.log("componentDidUpdate -- ApplicationViews")
     }
 
@@ -54,7 +63,7 @@ class ApplicationViews extends Component {
             .then(() => OwnerManager.getAll())
             .then(owners => newState.owners = owners)
             .then(() => fetch("http://localhost:5002/animalOwners")
-            .then(r => r.json()))
+                .then(r => r.json()))
             .then(animalOwners => newState.animalOwners = animalOwners)
             .then(() => this.setState(newState))
     }
@@ -69,11 +78,12 @@ class ApplicationViews extends Component {
                 }} />
                 <Route exact path="/animals" render={(props) => {
                     return <AnimalList animals={this.state.animals}
-                                owners={this.state.owners}
-                                animalOwners={this.state.animalOwners}
-                                dischargeAnimal={this.dischargeAnimal}
-                                loadAnimals={this.getAllAnimalsAgain}
-                                />
+                        owners={this.state.owners}
+                        animalOwners={this.state.animalOwners}
+                        dischargeAnimal={this.dischargeAnimal}
+                        loadAnimals={this.getAllAnimalsAgain}
+                        {...props}
+                    />
                 }} />
                 <Route exact path="/animals/:animalId(\d+)" render={(props) => {
                     console.log(props)
@@ -82,10 +92,15 @@ class ApplicationViews extends Component {
                         dischargeAnimal={this.dischargeAnimal}
                         animals={this.state.animals} />
                 }} />
+                <Route path="/animals/new" render={(props) => {
+                    return <AnimalForm {...props}
+                        addAnimal={this.addAnimal}
+                        employees={this.state.employees} />
+                }} />
                 <Route exact path="/employees" render={(props) => {
                     return <EmployeeList
-                    fireEmployee={this.fireEmployee}
-                    employees={this.state.employees}
+                        fireEmployee={this.fireEmployee}
+                        employees={this.state.employees}
                     />
                 }} />
                 <Route exact path="/employees/:employeeId(\d+)" render={(props) => {

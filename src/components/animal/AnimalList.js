@@ -4,13 +4,13 @@ import AnimalCard from './AnimalCard';
 import { ToastContainer, toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 
-class AnimalList extends Component {
+export default class AnimalList extends Component {
 
     componentDidMount() {
         console.log("componentDidMount -- AnimalList")
     }
 
-    shouldComponentUpdate (nextProps, nextState) {
+    shouldComponentUpdate(nextProps, nextState) {
         if (this.props.animals.length === nextProps.animals.length) {
             toast.warning("No change in state. Not updating", {
                 position: toast.POSITION.TOP_LEFT,
@@ -21,7 +21,7 @@ class AnimalList extends Component {
         return true
     }
 
-    componentDidUpdate (prevProps, prevState) {
+    componentDidUpdate(prevProps, prevState) {
         console.log("componentDidUpdate -- AnimalList")
 
         toast.success("Animals Reloaded", {
@@ -35,6 +35,16 @@ class AnimalList extends Component {
         return (
             <article className="animals">
                 <ToastContainer className="toastContainer" />
+                <div className="animalButton">
+                    <button type="button"
+                        className="btn btn-success"
+                        onClick={() => {
+                            this.props.history.push("/animals/new")
+                        }
+                        }>
+                        Admit Animal
+                    </button>
+                </div>
                 {
                     this.props.animals.map(animal =>
                         <AnimalCard key={`animal-${animal.id}`}
@@ -60,4 +70,3 @@ class AnimalList extends Component {
     }
 }
 
-export default AnimalList
